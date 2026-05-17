@@ -9,8 +9,11 @@ from 'src/core/events/infrastructure/base.consumer';
 import { RabbitMQConnection }
 from 'src/core/events/infrastructure/rabbitmq.connection';
 
+import { LogsService }
+from '../application/logs.service';
+
 @Injectable()
-export class SystemLogConsumer
+export class LogsConsumer
   extends BaseConsumer {
 
   protected queue =
@@ -21,12 +24,13 @@ export class SystemLogConsumer
   ];
 
   protected logger =
-    new Logger(
-      SystemLogConsumer.name,
-    );
+    new Logger(LogsConsumer.name);
 
   constructor(
     rabbit: RabbitMQConnection,
+
+    private logsService:
+      LogsService,
   ) {
     super(rabbit);
   }
@@ -35,8 +39,8 @@ export class SystemLogConsumer
     payload: any,
   ): Promise<void> {
 
-    console.log(
-      '\n📦 CENTRALIZED LOG RECEIVED\n',
+    this.logger.log(
+      '📦 CENTRALIZED LOG RECEIVED',
     );
 
     console.log(
@@ -45,6 +49,10 @@ export class SystemLogConsumer
         null,
         2,
       ),
+    );
+
+    await this.logsService.saveLog(
+      payload,
     );
   }
 }
