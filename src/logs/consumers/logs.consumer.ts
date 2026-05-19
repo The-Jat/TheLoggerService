@@ -19,8 +19,13 @@ export class LogsConsumer
   protected queue =
     'system.logs.queue';
 
+    // Using wilcard routing to receive:
+    // system.logs
+    // system.error
+    // system.warn
+    // system.metrics etc.
   protected routingKeys = [
-    'system.logs',
+    'system.*',
   ];
 
   protected logger =
